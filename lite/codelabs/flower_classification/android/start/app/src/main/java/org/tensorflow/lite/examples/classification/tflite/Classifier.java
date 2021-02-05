@@ -68,7 +68,7 @@ public abstract class Classifier {
 
   /** Optional GPU delegate for acceleration. */
   // TODO: Declare a GPU delegate
-
+  private GpuDelegate gpuDelegate = null;
 
   /** An instance of the driver class to run model inference with Tensorflow Lite. */
   // TODO: Declare a TFLite interpreter
@@ -180,6 +180,8 @@ public abstract class Classifier {
     switch (device) {
       case GPU:
         // TODO: Create a GPU delegate instance and add it to the interpreter options
+        gpuDelegate = new GpuDelegate();
+        tfliteOptions.addDelegate(gpuDelegate);
 
         break;
       case CPU:
@@ -255,7 +257,10 @@ public abstract class Classifier {
       // TODO: Close the interpreter
       tflite.close();
       tflite = null;
-
+      if (gpuDelegate != null) {
+        gpuDelegate.close();
+        gpuDelegate = null;
+      }
     }
     // TODO: Close the GPU delegate
 
